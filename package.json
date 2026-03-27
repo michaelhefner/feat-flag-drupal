@@ -1,0 +1,19 @@
+{
+  "name": "version-builder",
+  "version": "0.0.4",
+  "private": false,
+  "main": "build/main.js",
+  "files": [
+    "build"
+  ],
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "node scripts/build.js",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "sass-embedded": "^1.98.0",
+    "vite": "^7.0.0"
+  }
+}
