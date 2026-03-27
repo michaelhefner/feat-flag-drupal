@@ -1,6 +1,7 @@
 import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, unlinkSync } from 'fs';
 import { resolve } from 'path';
+import { build } from 'vite';
 
 const buildDir = './build';
 const manifestPath = resolve(buildDir, 'manifest.json');
@@ -63,3 +64,29 @@ manifest.latest_version = currentVersion;
 writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
 console.log('Manifest updated successfully!');
 console.log(`Version ${currentVersion} rebuilt.`);
+
+// Watch mode configuration
+const viteConfig = {
+  build: {
+    watch: {},
+    outDir: 'build',
+    rollupOptions: {
+      input: {
+        main: './src/main.js',
+        style: './src/style.scss',
+      },
+      output: {
+        entryFileNames: '[name].js',
+        assetFileNames: '[name].[ext]',
+      },
+    },
+  },
+};
+
+console.log('Starting Vite in watch mode...');
+
+// Run Vite in watch mode
+build(viteConfig).catch((error) => {
+  console.error('Error in watch mode:', error);
+  process.exit(1);
+});

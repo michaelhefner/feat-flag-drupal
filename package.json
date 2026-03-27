@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "dev:build": "node scripts/dev-build.js",
+    "dev:watch": "node scripts/dev-build.js",
     "build": "node scripts/build.js",
     "build:version": "node scripts/version.js",
     "preview": "vite preview"
