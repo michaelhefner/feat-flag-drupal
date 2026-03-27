@@ -1,5 +1,5 @@
 {
-  "name": "version-builder",
+  "name": "feat-flag-drupal",
   "version": "0.0.4",
   "private": false,
   "main": "build/main.js",
@@ -15,5 +15,7 @@
   "devDependencies": {
     "sass-embedded": "^1.98.0",
     "vite": "^7.0.0"
-  }
+  },
+  "license": "MIT",
+  "description": "A tool to build and manage versioned assets for Drupal themes, enabling feature flagging and A/B testing."
 }

@@ -120,5 +120,3 @@ Finally, in your Drupal theme's Twig templates (e.g., `page.html.twig`), you att
 2.  You run `npm run build` to create a new, versioned set of assets and update the `manifest.json`.
 3.  When a user visits your Drupal site, the `my_theme.theme` file reads the manifest, determines which version to show based on your feature flagging logic, and tells Drupal the exact CSS and JS files to load for that version.
 4.  Drupal attaches those specific, versioned files to the page.
-
-This approach gives you a robust, automated versioning system that integrates cleanly with Drupal's own asset management system.
