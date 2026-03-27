@@ -1,6 +1,6 @@
 {
   "name": "feat-flag-drupal",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "private": false,
   "main": "build/main.js",
   "files": [
