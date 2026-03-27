@@ -2,13 +2,13 @@ import { execSync } from 'child_process';
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync, unlinkSync } from 'fs';
 import { resolve } from 'path';
 
+const packageJsonPath = './package.json';
 const buildDir = './build';
 const manifestPath = resolve(buildDir, 'manifest.json');
 const versionJsonPath = './version.json';
-const packageJsonPath = './package.json';
 
-// Determine which version to build (use latest or create first version)
-let currentVersion;
+// 1. Determine the new version
+let newVersion;
 let manifest = { versions: {}, latest_version: '' };
 
 if (!existsSync(buildDir)) {
@@ -17,18 +17,21 @@ if (!existsSync(buildDir)) {
 
 if (existsSync(manifestPath)) {
   manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
-  currentVersion = manifest.latest_version || '0.0.1';
+  const latestVersion = manifest.latest_version || '0.0.0';
+  const versionParts = latestVersion.split('.').map(Number);
+  versionParts[2]++; // Increment patch version
+  newVersion = versionParts.join('.');
 } else {
   const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf-8'));
-  currentVersion = packageJson.version || '0.0.1';
+  newVersion = packageJson.version || '0.0.1';
 }
 
-console.log(`Rebuilding version: ${currentVersion}`);
+console.log(`Creating new version: ${newVersion}`);
 
 // Write version to a temporary file for vite.config.js to read
-writeFileSync(versionJsonPath, JSON.stringify({ version: currentVersion }));
+writeFileSync(versionJsonPath, JSON.stringify({ version: newVersion }));
 
-// Run vite build
+// 2. Run vite build
 try {
   console.log('Running vite build...');
   execSync('npx vite build', { stdio: 'inherit' });
@@ -43,23 +46,23 @@ try {
   }
 }
 
-// Generate/update manifest
-console.log('Updating manifest...');
+// 3. Generate manifest
+console.log('Generating manifest...');
 const buildFiles = readdirSync(buildDir);
 const versionFiles = {};
 
 buildFiles.forEach(file => {
-  // Find files that match the current version pattern
-  if (file.includes(`-${currentVersion}.`)) {
+  // Find files that match the new version pattern
+  if (file.includes(`-${newVersion}.`)) {
     // Extract the base name of the file (e.g., 'main.js' from 'main-0.0.1.js')
-    const baseName = file.replace(`-${currentVersion}`, '');
+    const baseName = file.replace(`-${newVersion}`, '');
     versionFiles[baseName] = `/${file}`;
   }
 });
 
-manifest.versions[currentVersion] = versionFiles;
-manifest.latest_version = currentVersion;
+manifest.versions[newVersion] = versionFiles;
+manifest.latest_version = newVersion;
 
 writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
-console.log('Manifest updated successfully!');
-console.log(`Version ${currentVersion} rebuilt.`);
+console.log('Manifest generated successfully!');
+console.log(`New version ${newVersion} created!`);

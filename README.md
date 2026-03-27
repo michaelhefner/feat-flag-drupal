@@ -4,10 +4,12 @@ This project is a simple versioning system for web assets. It uses Vite to bundl
 
 ## Development vs. Production
 
-This project has two main modes:
+This project has multiple build modes:
 
-*   **Development (`npm run dev`):** Uses a standard `index.html` file for a fast and reliable development experience with Hot Module Replacement (HMR). (For testing only)
-*   **Production Build (`npm run build`):** Generates versioned assets in the `build/` directory.
+*   **Development with HMR (`npm run dev`):** Uses a standard `index.html` file for a fast development experience with Hot Module Replacement.
+*   **Development Build (`npm run dev:build`):** Rebuilds the current version without incrementing - useful for testing changes to the latest version.
+*   **Production Build (`npm run build`):** Rebuilds the current version (same as `dev:build`).
+*   **Create New Version (`npm run build:version`):** Increments the version and creates new versioned assets.
 
 ## How to Use
 
@@ -17,29 +19,46 @@ This project has two main modes:
     ```
 
 2.  **Develop your application:**
-    *   Run `npm run dev`.
+    *   Run `npm run dev` for live development with HMR.
     *   Make changes to your assets in the `src/` directory.
     *   The browser will automatically update as you save files.
 
-3.  **Prepare for production:**
-    *   You will want to name the twig file to match the desired drupal asset such as `page.html.twig` or any other
+3.  **Test your changes:**
+    *   Run `npm run dev:build` or `npm run build` to rebuild the current version.
+    *   This lets you test the production build without creating a new version.
 
-4.  **Build a new version:**
-    *   When you are ready to create a new version of your assets, run the following command:
+4.  **Create a new version:**
+    *   When you are ready to release a new version, run:
     ```bash
-    npm run build
+    npm run build:version
     ```
+    *   This will increment the patch version and create new versioned assets.
 
 ## How the Build Process Works
 
-The `npm run build` command does the following:
+### Rebuilding Current Version (`npm run build` or `npm run dev:build`)
 
-1.  **Determines New Version:** It checks for a `build/manifest.json`. If it exists, it increments the `latest_version` number to create a new version. If not, it uses the version from `package.json`. The `package.json` file itself is not modified.
-2.  **Builds Assets:** It runs Vite to build and bundle your assets, compiling your `index.twig` file into a final `index.html`.
-3.  **Outputs Versioned Files:** The output files are placed in the `build/` directory. The filenames will include the new version number, for example:
+These commands rebuild the current version without incrementing:
+
+1.  **Uses Current Version:** Reads the `latest_version` from `build/manifest.json` (or `package.json` if no manifest exists).
+2.  **Builds Assets:** Runs Vite to build and bundle your assets.
+3.  **Outputs Versioned Files:** Overwrites the existing versioned files in the `build/` directory.
+4.  **Updates Manifest:** Updates the manifest entry for the current version.
+
+Use this during development when you want to iterate on the current version without creating new version numbers.
+
+### Creating New Version (`npm run build:version`)
+
+This command creates a new version:
+
+1.  **Increments Version:** Reads `latest_version` from `build/manifest.json` and increments the patch number (e.g., 0.0.1 → 0.0.2).
+2.  **Builds Assets:** Runs Vite to build and bundle your assets.
+3.  **Outputs Versioned Files:** Creates new files with the incremented version number:
     *   `main-0.0.2.js`
     *   `style-0.0.2.css`
-4.  **Generates a Manifest:** It creates or updates a `build/manifest.json` file.
+4.  **Updates Manifest:** Adds the new version to `build/manifest.json` and updates `latest_version`.
+
+Use this when you're ready to release a new version to production.
 
 
 ## Feature Flagging and the Manifest
