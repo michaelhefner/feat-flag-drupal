@@ -76,8 +76,8 @@ const viteConfig = {
         style: './src/style.scss',
       },
       output: {
-        entryFileNames: '[name].js',
-        assetFileNames: '[name].[ext]',
+        entryFileNames: `[name]-${currentVersion}.js`,
+        assetFileNames: `[name]-${currentVersion}.[ext]`,
       },
     },
   },
